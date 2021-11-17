@@ -20,7 +20,7 @@ class EKSStack(cdk.Stack):
         # PIPELINE
         source_artifact = codepipeline.Artifact()
         
-        pipeline = pipelines.CodePipeline(self, "Pipeline",
+        pipeline = pipelines.CodePipeline(self, "Pipeline", self_mutation=False,
             synth=pipelines.ShellStep("Synth",
                 input=pipelines.CodePipelineSource.code_commit(repo, "master"),
                 commands=["pip install -r requirements.txt", "npm install -g aws-cdk", "cdk synth"]
