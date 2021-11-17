@@ -32,13 +32,8 @@ class EKSStack(cdk.Stack):
             build_environment=codebuild.BuildEnvironment(privileged=True),
             role_policy=[iam.PolicyStatement(
                         effect=iam.Effect.ALLOW,
-                        actions=["sts:AssumeRole"],
+                        actions=["cloudformation:*"],
                         resources=["*"],
-                        conditions={
-                            "StringEquals": {
-                                "iam:ResourceTag/aws-cdk:bootstrap-role": "lookup"
-                            }
-                        }
                     )
                 ]
         )
