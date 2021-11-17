@@ -10,10 +10,11 @@ from aws_cdk import core as cdk
 from aws_cdk import core
 
 from asea_iac.asea_iac_stack import AseaIacStack
+from asea_iac.pipeline import EKSStack
 
 
 app = core.App()
-AseaIacStack(app, "AseaIacStack",
+AseaIacStack(app, "AseaIacStack"
     # If you don't specify 'env', this stack will be environment-agnostic.
     # Account/Region-dependent features and context lookups will not work,
     # but a single synthesized template can be deployed anywhere.
@@ -30,5 +31,7 @@ AseaIacStack(app, "AseaIacStack",
 
     # For more information, see https://docs.aws.amazon.com/cdk/latest/guide/environments.html
     )
+
+EKSStack(app, "EKSStack")
 
 app.synth()
