@@ -3,7 +3,9 @@ from aws_cdk import (
     aws_codepipeline as codepipeline,
     aws_codepipeline_actions as cp_actions,
     aws_codecommit as codecommit,
-    pipelines as pipelines
+    pipelines as pipelines,
+    aws_iam as iam,
+    aws_codebuild as codebuild
 )
 
 class EKSStack(cdk.Stack):
@@ -20,11 +22,24 @@ class EKSStack(cdk.Stack):
         # PIPELINE
         source_artifact = codepipeline.Artifact()
         
-        pipeline = pipelines.CodePipeline(self, "Pipeline", self_mutation=False,
+        pipeline = pipelines.CodePipeline(self, "Pipeline", 
             synth=pipelines.ShellStep("Synth",
                 input=pipelines.CodePipelineSource.code_commit(repo, "master"),
                 commands=["pip install -r requirements.txt", "npm install -g aws-cdk", "cdk synth"]
-            )
-        )
-
+            ),
         
+        code_build_defaults=pipelines.CodeBuildOptions(
+            build_environment=codebuild.BuildEnvironment(privileged=True),
+            role_policy=[iam.PolicyStatement(
+                        effect=iam.Effect.ALLOW,
+                        actions=["sts:AssumeRole"],
+                        resources=["*"],
+                        conditions={
+                            "StringEquals": {
+                                "iam:ResourceTag/aws-cdk:bootstrap-role": "lookup"
+                            }
+                        }
+                    )
+                ]
+        )
+        )
